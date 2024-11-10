@@ -12,7 +12,10 @@ import SwiftData
 struct UrsafitApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
+            // TODO: Add your SwiftData models here
+            // For now, we'll keep Item for reference
             Item.self,
+            // Later we'll add: User.self, WorkoutEntry.self, etc.
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -25,7 +28,13 @@ struct UrsafitApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            // Create a sample user for initial testing
+            HomePage(viewModel: MainViewModel(user: User(
+                name: "Test User",
+                username: "testuser",
+                currentStreak: 0,
+                bearCoins: 100
+            )))
         }
         .modelContainer(sharedModelContainer)
     }
