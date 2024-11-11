@@ -10,6 +10,7 @@ import SwiftUI
 struct HomePage: View {
     @StateObject var viewModel: MainViewModel
     @State private var showingWorkoutPrompt = false
+    @State private var showingHealthKitPrompt = false
     
     var body: some View {
         NavigationView {
@@ -29,8 +30,8 @@ struct HomePage: View {
                         LazyVStack(spacing: 12) {
                             ForEach(viewModel.workoutFeed) { workout in
                                 HomePageCell(workout: workout)
-                                    .padding(.horizontal)
                             }
+                            .padding(.horizontal)
                         }
                         .padding(.vertical)
                     }
@@ -40,10 +41,35 @@ struct HomePage: View {
                 }
             }
             .navigationBarHidden(true)
+            .task{
+                await checkHealthKitAuthorization()
+            }
         }
         .sheet(isPresented: $showingWorkoutPrompt) {
             Text("Workout Prompt - Coming Soon")
                 .padding()
+        }
+        .overlay {
+            if showingHealthKitPrompt{
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .overlay {
+                        HealthKitPermissionView(
+                            healthKitVM: viewModel.healthKitVM,
+                            isPresented: $showingHealthKitPrompt
+                        )
+                        .transition(.scale)
+                    }
+            }
+        }
+        .animation(.easeInOut, value: showingHealthKitPrompt)
+    }
+    
+    private func checkHealthKitAuthorization() async {
+        await viewModel.healthKitVM.updateAuthorizationStatus()
+        
+        if viewModel.healthKitVM.authorizationStatus == .notDetermined || viewModel.healthKitVM.authorizationStatus == .denied {
+            showingHealthKitPrompt == true
         }
     }
 }
@@ -54,7 +80,7 @@ struct HomePage_Previews: PreviewProvider {
         let sampleUser = User(
             name: "John Doe",
             username: "johndoe",
-            currentStreak: 5,
+            currentStreak: 10,
             bearCoins: 100
         )
         HomePage(viewModel: MainViewModel(user: sampleUser))

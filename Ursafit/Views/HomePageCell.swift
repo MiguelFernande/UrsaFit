@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import HealthKit
 
 struct HomePageCell: View {
     let workout: WorkoutEntry
@@ -40,21 +41,5 @@ struct HomePageCell: View {
         .background(Color(.systemBackground))
         .cornerRadius(10)
         .shadow(radius: 2)
-    }
-}
-
-// MARK: - Preview
-struct HomePageCell_Previews: PreviewProvider {
-    static var previews: some View {
-        HomePageCell(workout: WorkoutEntry(
-            id: UUID(),
-            title: "Morning Workout",
-            description: "Completed 30 minutes of cardio and strength training",
-            date: Date(),
-            coinsEarned: 50,
-            workoutType: .cardio
-        ))
-        .padding()
-        .background(Color(.systemGroupedBackground))
     }
 }

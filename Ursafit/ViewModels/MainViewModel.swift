@@ -6,62 +6,21 @@
 //
 import SwiftUI
 
-// MARK: - Workout Entry Model
-struct WorkoutEntry: Identifiable {
-    let id: UUID
-    let title: String
-    let description: String
-    let date: Date
-    let coinsEarned: Int
-    let workoutType: WorkoutType
-    
-    enum WorkoutType {
-        case strength
-        case cardio
-        case flexibility
-        case custom(String)
-        
-        // TODO: Add function to get appropriate icon for each type
-        /*
-        func getIcon() -> String {
-            switch self {
-                case .strength: return "dumbbell"
-                case .cardio: return "heart.circle"
-                case .flexibility: return "figure.flexibility"
-                case .custom: return "star"
-            }
-        }
-        */
-    }
-}
-
 // MARK: - View Model
 class MainViewModel: ObservableObject {
     @Published var user: User
     @Published var workoutFeed: [WorkoutEntry]
+    @Published var healthKitVM: HealthKitViewModel
     
     init(user: User) {
         self.user = user
+        self.workoutFeed = []
+        self.healthKitVM = HealthKitViewModel()
         
-        // Sample workout feed data - Replace with real data later
-        self.workoutFeed = [
-            WorkoutEntry(
-                id: UUID(),
-                title: "Sample Workout 1",
-                description: "This is a placeholder workout entry",
-                date: Date(),
-                coinsEarned: 50,
-                workoutType: .cardio
-            ),
-            WorkoutEntry(
-                id: UUID(),
-                title: "Sample Workout 2",
-                description: "Another placeholder workout entry",
-                date: Date().addingTimeInterval(-3600 * 24),
-                coinsEarned: 30,
-                workoutType: .strength
-            )
-        ]
+        // Request HealthKit authorization when initializing
+        Task {
+            await healthKitVM.updateAuthorizationStatus()
+        }
     }
     
     // MARK: - Future Implementation Functions
@@ -105,16 +64,6 @@ class MainViewModel: ObservableObject {
         // 4. Update feed array
     }
     */
-    
-    // MARK: - Minimal Implementation for Preview
-    
-    // Basic function to add a workout - just for testing
-    func addWorkout(_ workout: WorkoutEntry) {
-        workoutFeed.insert(workout, at: 0)
-        // Just increment values for preview purposes
-        user.currentStreak += 1
-        user.bearCoins += workout.coinsEarned
-    }
 }
 
 // MARK: - Preview Helper
