@@ -8,39 +8,81 @@ import HealthKit
 import Foundation
 
 struct WorkoutEntry: Identifiable {
-    var id: UUID
-    var title: String
-    var description: String
-    var date: Date
-    var coinsEarned: Int
+    let id: UUID
+    let title: String
+    let date: Date
+    let duration: TimeInterval
+    let energyBurned: Double?  // in calories
+    let distance: Double?      // in kilometers
+    let workoutType: HKWorkoutActivityType
+    let coinsEarned: Int
     
-    // HealthKit properties
-    var healthKitWorkout: HKWorkout?
-    var activeEnergyBurned: Double?
-    var distance: Double?
-    var duration: TimeInterval?
-
-    // Initializer from HKWorkout
-    init(from healthKitWorkout: HKWorkout) {
+    var description: String {
+        var components: [String] = []
+        
+        components.append("Duration: \(formattedDuration)")
+        
+        if let energy = energyBurned {
+            components.append("Energy: \(Int(energy)) cals")
+        }
+        
+        if let dist = distance {
+            components.append("Distance: \(String(format: "%.2f", dist)) km")
+        }
+        
+        return components.joined(separator: ", ")
+    }
+    
+    private var formattedDuration: String {
+        let minutes = Int(duration / 60)
+        return "\(minutes) min"
+    }
+    
+    init(from workout: HKWorkout) {
         self.id = UUID()
-        self.title = "Workout" // Can be customized or mapped based on the workout type
-        self.date = healthKitWorkout.startDate
-        self.coinsEarned = Int(healthKitWorkout.duration / 60) * 10 // Example logic: 10 coins per minute
+        self.date = workout.startDate
+        self.duration = workout.duration
+        self.workoutType = workout.workoutActivityType
         
-        // Set HealthKit properties
-        self.healthKitWorkout = healthKitWorkout
-        self.duration = healthKitWorkout.duration
-
-        // Extract additional data from workout metadata
-        if let energyBurned = healthKitWorkout.totalEnergyBurned?.doubleValue(for: .kilocalorie()) {
-            self.activeEnergyBurned = energyBurned
-        }
-
-        if let distance = healthKitWorkout.totalDistance?.doubleValue(for: .meter()) {
-            self.distance = distance / 1000 // Convert to kilometers
+        // Extract energy burned
+        self.energyBurned = workout.totalEnergyBurned?.doubleValue(for: .smallCalorie())
+        
+        // Extract distance in kilometers
+        if let distanceMeters = workout.totalDistance?.doubleValue(for: .meter()) {
+            self.distance = distanceMeters / 1000
+        } else {
+            self.distance = nil
         }
         
-        // Custom description based on extracted data
-        self.description = "Duration: \(Int(duration ?? 0) / 60) mins, Energy Burned: \(Int(activeEnergyBurned ?? 0)) kcal, Distance: \(String(format: "%.2f", distance ?? 0)) km"
+        // Map workout type to title
+        self.title = workout.workoutActivityType.displayName
+        
+        // Calculate coins (example: 10 coins per minute)
+        self.coinsEarned = Int(energyBurned ?? 0)
+    }
+
+    // For testing/preview purposes
+    init(preview: Bool = false) {
+        self.id = UUID()
+        self.title = "Sample Workout"
+        self.date = Date()
+        self.duration = 1800 // 30 minutes
+        self.energyBurned = 2500
+        self.distance = 3.5
+        self.workoutType = .running
+        self.coinsEarned = 300
+    }
+}
+
+// Helper extension for workout type names
+extension HKWorkoutActivityType {
+    var displayName: String {
+        switch self {
+        case .running: return "Run"
+        case .cycling: return "Cycle"
+        case .walking: return "Walk"
+        case .swimming: return "Swim"
+        default: return "Workout"
+        }
     }
 }

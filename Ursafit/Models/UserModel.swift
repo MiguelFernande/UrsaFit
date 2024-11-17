@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import HealthKit
 
 // Represents different types of workout goals
 enum GoalFrequency {

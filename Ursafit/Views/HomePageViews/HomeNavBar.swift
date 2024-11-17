@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct HomeNavBar: View {
+    @EnvironmentObject private var coordinator: AppCoordinator
+
     let streakCount: Int
     let coinCount: Int
     
@@ -24,11 +26,11 @@ struct HomeNavBar: View {
             Spacer()
             
             // Placeholder for friends button
-            NavigationLink(destination: Text("Friends View - Coming Soon")) {
-                // TODO: Replace with actual friends icon
+            Button(action: { coordinator.navPath.append(.friend)
+                print("Navigating to friend")   // DEBUG
+}) {
                 Image(systemName: "person.2.fill")
                     .font(.title2)
-                    .foregroundColor(.purple)
             }
         }
         .padding()
