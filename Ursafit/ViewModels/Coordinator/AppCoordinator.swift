@@ -27,9 +27,11 @@ class AppCoordinator: ObservableObject {
     @Published var isWorkoutPromptVisible: Bool = false // CHANGED: State for workout prompt visibility
 
     let mainViewModel: MainViewModel
+    let nutrionViewModel: NutritionTopicsViewModel
 
-    init(mainViewModel: MainViewModel) {
+    init(mainViewModel: MainViewModel, nutrionViewModel: NutritionTopicsViewModel) {
         self.mainViewModel = mainViewModel
+        self.nutrionViewModel = nutrionViewModel
     }
 
     func build(route: AppRoute) -> some View {
@@ -46,7 +48,7 @@ class AppCoordinator: ObservableObject {
         case .profile:
             return AnyView(ProfileView().environmentObject(mainViewModel))
         case .nutrition:
-            return AnyView(NutritionView())
+            return AnyView(NutritionTopicsView())
         case .shop:
             return AnyView(ShopView().environmentObject(mainViewModel))
         case .friend:

@@ -57,13 +57,21 @@ struct HomePage_Previews: PreviewProvider {
             currentStreak: 10,
             bearCoins: 100
         )
-        let viewModel = MainViewModel(
+        
+        let mainViewModel = MainViewModel(
             user: sampleUser,
             workoutService: WorkoutService.shared,
             permissionService: PermissionService.shared
         )
+        
+        let nutritionViewModel = NutritionTopicsViewModel()
+        
+        let coordinator = AppCoordinator(
+            mainViewModel: mainViewModel,
+            nutrionViewModel: nutritionViewModel
+        )
 
-        return HomePage(viewModel: viewModel)
-            .environmentObject(AppCoordinator(mainViewModel: viewModel))
+        return HomePage(viewModel: mainViewModel)
+            .environmentObject(coordinator)
     }
 }

@@ -120,23 +120,3 @@ struct PentagonShape: Shape {
         return path
     }
 }
-
-// MARK: - Preview
-struct RibbonPage_Previews: PreviewProvider {
-    static var previews: some View {
-        let sampleUser = User(
-            name: "John Doe",
-            username: "johndoe",
-            currentStreak: 10,
-            bearCoins: 100
-        )
-        let viewModel = MainViewModel(
-            user: sampleUser,
-            workoutService: WorkoutService.shared,
-            permissionService: PermissionService.shared
-        )
-
-        return HomePage(viewModel: viewModel)
-            .environmentObject(AppCoordinator(mainViewModel: viewModel))
-    }
-}

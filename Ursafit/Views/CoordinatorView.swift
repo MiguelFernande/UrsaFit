@@ -11,8 +11,9 @@ struct CoordinatorView: View {
     @StateObject private var coordinator = AppCoordinator(mainViewModel: MainViewModel(
         user: User(name: "TestName", username: "Test User"),
         workoutService: WorkoutService.shared,
-        permissionService: PermissionService.shared
-    ))
+        permissionService: PermissionService.shared),
+        nutrionViewModel: NutritionTopicsViewModel()
+    )
 
     var body: some View {
         NavigationStack(path: $coordinator.navPath) {
@@ -21,6 +22,6 @@ struct CoordinatorView: View {
                     coordinator.build(route: route)
                 }
         }
-        .environmentObject(coordinator) // Inject AppCoordinator globally
+        .environmentObject(coordinator)
     }
 }
