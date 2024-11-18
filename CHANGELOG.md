@@ -49,3 +49,7 @@
 - **Purpose**: Provides a ribbon at the bottom of the home page to initiate new workouts or display prompts.
 - **Key Properties**:
   - `showingWorkoutPrompt`: A binding to trigger the display of a workout initiation prompt.
+
+
+## Third Commit: Added Health Kit functionality + other stuff.
+- **Added**: A lot.
