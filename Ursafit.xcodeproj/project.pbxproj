@@ -297,6 +297,8 @@
 				INFOPLIST_FILE = Ursafit/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = UrsaFit;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "\"UrsaFit needs access to your health data to track your workouts and maintain your streak\"";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "\"UrsaFit needs permission to save your workouts to HealthKit\"";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -336,6 +338,8 @@
 				INFOPLIST_FILE = Ursafit/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = UrsaFit;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "\"UrsaFit needs access to your health data to track your workouts and maintain your streak\"";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "\"UrsaFit needs permission to save your workouts to HealthKit\"";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
