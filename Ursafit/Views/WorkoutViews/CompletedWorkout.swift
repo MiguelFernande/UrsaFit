@@ -14,8 +14,14 @@ struct CompletedWorkout: View {
 
     var body: some View {
         ZStack {
-            Color.gray
-                .ignoresSafeArea()
+            
+            Image("Bear_Thumbs_Up")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .edgesIgnoringSafeArea(.all)
+            
+            Color.black.opacity(0.4)
+                .edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 20) {
                 Text("Workout Completed!")
