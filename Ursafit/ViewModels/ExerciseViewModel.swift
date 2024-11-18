@@ -12,7 +12,7 @@ class ExerciseViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    private let apiKey = "5vZTVMLGtfDqsjV50y9I9RcUKaTeYkIdNss2prKC"
+    private let apiKey = "***********"
     
     func fetchExercises() {
         isLoading = true
