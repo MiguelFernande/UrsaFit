@@ -53,3 +53,26 @@
 
 ## Third Commit: Added Health Kit functionality + other stuff.
 - **Added**: A lot.
+
+
+## Forth Commit: Uploaded the backend to Firebase for user storage and functionality
+
+### + Added Files:
+#### 1. `ExerciseListView.swift`
+- **Purpose**: Displays a list of workouts to the user.
+- **Key Properties**:
+  - `SearchBar` : Adds a search feature for users to look up specific workouts.
+
+#### 2. `ExerciseDetailView.swift`
+- **Purpose**: Presents information about a specific workout to the users. 
+- **Key Properties**:
+  Categories include:
+    - workout type
+    - muscle group
+    - equipment needed (if applicable)
+    - workout dificulty
+    - instructions
+      
+- #### Minor updates made to `ExerciseViewModel.swift`
+- #### Updates to artwork and UI
+ 
