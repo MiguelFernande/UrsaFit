@@ -16,7 +16,7 @@ struct WorkoutPrompt: View {
             HStack(spacing: 0) {
                 // Left side - Bear Image
                 VStack {
-                    Image("BearSketch")
+                    Image("BearPose")
                         .resizable()
                         .frame(width: 200, height: 750, alignment: .center)
                 }

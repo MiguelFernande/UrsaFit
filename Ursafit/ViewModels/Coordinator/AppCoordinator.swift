@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import FirebaseCore
+import FirebaseAuth
+import FirebaseAuthUI
 
-// MARK: - Navigation Routes
 enum AppRoute: Hashable {
     case home
     case workout
@@ -18,14 +20,27 @@ enum AppRoute: Hashable {
     case shop
     case lifting
     case friend
+    case auth
+    case setup
+    case login
+    case createAccount
+}
+
+enum AuthenticationState {
+    case unknown
+    case authenticated(User)
+    case unauthenticated
+    case newUser
 }
 
 // MARK: - App Coordinator
 
 class AppCoordinator: ObservableObject {
     @Published var navPath = [AppRoute]()
-    @Published var isWorkoutPromptVisible: Bool = false // CHANGED: State for workout prompt visibility
-
+    @Published var isWorkoutPromptVisible: Bool = false
+    @Published var showAuthSheet = false
+    @Published var isAuthenticated = false
+    
     let mainViewModel: MainViewModel
     let nutrionViewModel: NutritionTopicsViewModel
 
@@ -33,12 +48,20 @@ class AppCoordinator: ObservableObject {
         self.mainViewModel = mainViewModel
         self.nutrionViewModel = nutrionViewModel
     }
+    
+    func checkAuthState() {
+        if Auth.auth().currentUser != nil {
+            self.isAuthenticated = true
+        } else {
+            self.showAuthSheet = true
+        }
+    }
 
     func build(route: AppRoute) -> some View {
         print("Building view for route: \(route)")
         switch route {
         case .home:
-            return AnyView(HomePage(viewModel: self.mainViewModel))
+            return AnyView(HomePage().environmentObject(mainViewModel))
         case .workout:
             return AnyView(WorkoutView().environmentObject(mainViewModel))
         case .completedWorkout:
@@ -54,7 +77,15 @@ class AppCoordinator: ObservableObject {
         case .friend:
             return AnyView(FriendsView())
         case .lifting:
-            return AnyView(LiftingView())
+            return AnyView(ExerciseListView(viewModel: ExerciseViewModel()))
+        case .auth:
+            return AnyView(AuthView())
+        case .setup:
+            return AnyView(WorkoutScheduleSetupView().environmentObject(mainViewModel))
+        case .login:
+            return AnyView(LoginView())
+        case .createAccount:
+            return AnyView(UserCreationView().environmentObject(mainViewModel))
         }
     }
 }

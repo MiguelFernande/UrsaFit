@@ -4,10 +4,12 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct ShopView: View {
     @EnvironmentObject var viewModel: MainViewModel
-    @State private var displayedCoins: Int = 0 // Local state variable for visual updates
+    @State private var displayedCoins: Int = 0
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationView {
@@ -20,7 +22,7 @@ struct ShopView: View {
                         .foregroundColor(.primary)
                 }
                 .padding(.bottom, 20)
-
+                
                 // Donate Button
                 Button(action: {
                     let success = viewModel.donateToUncleLarry()
@@ -37,7 +39,7 @@ struct ShopView: View {
                         .cornerRadius(10)
                 }
                 .disabled(viewModel.user.bearCoins < 150) // Disable if insufficient coins
-
+                
                 // Buy Streak Freeze Button
                 Button(action: {
                     let success = viewModel.buyStreakFreeze()
@@ -60,9 +62,30 @@ struct ShopView: View {
             .onAppear {
                 updateDisplayedCoins() // Initialize the local state
             }
+            .onDisappear {
+                Task {
+                    await viewModel.updateCoinsInDatabase()
+                }
+            }
         }
     }
-
+    
+    private func fetchLatestCoins() {
+        Task {
+            guard let userId = Auth.auth().currentUser?.uid else { return }
+            do {
+                let userDatabaseService = UserDatabaseService()
+                let user = try await userDatabaseService.fetchUserProfile(userID: userId)
+                await MainActor.run {
+                    viewModel.user.bearCoins = user.bearCoins
+                    displayedCoins = user.bearCoins
+                }
+            } catch {
+                print("Error fetching coins: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     // Updates the displayed coin count
     private func updateDisplayedCoins() {
         displayedCoins = viewModel.user.bearCoins

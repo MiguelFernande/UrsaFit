@@ -6,13 +6,21 @@
 //
 
 import SwiftUI
+import FirebaseCore
+import FirebaseAuth
+import FirebaseAuthUI
+import FirebaseEmailAuthUI
+import FirebaseFirestore
 
 // MARK: - View Model
-class MainViewModel: ObservableObject {
-    @Published var isWorkoutActive: Bool = false
+class MainViewModel: NSObject, ObservableObject {
     @Published var user: User
     @Published var workoutFeed: [WorkoutEntry]
-    @Published var workoutStartTime: Date? // Tracks when the workout starts
+    @Published var workoutStartTime: Date?
+    @Published var isWorkoutActive: Bool = false
+    
+    @Published var isAuthenticated = false
+    @Published var authError: Error?
 
     let workoutService: WorkoutService
     let permissionService: PermissionService
@@ -22,6 +30,7 @@ class MainViewModel: ObservableObject {
         self.workoutFeed = []
         self.workoutService = workoutService
         self.permissionService = permissionService
+        super.init() // Required for NSObject
         
         // Request HealthKit authorization on init
         Task {
@@ -35,6 +44,27 @@ class MainViewModel: ObservableObject {
             await fetchWorkouts() // Only fetch after authorization
         } catch {
             print("Failed to request HealthKit authorization: \(error)")
+        }
+    }
+    
+    
+    func checkAuthState() {
+        if Auth.auth().currentUser != nil {
+            // User is signed in
+            self.isAuthenticated = true
+            // Load user data from UserDefaults if available
+            if let userData = UserDefaults.standard.data(forKey: "userData"),
+               let savedUser = try? JSONDecoder().decode(User.self, from: userData) {
+                self.user = savedUser
+            }
+        } else {
+            self.isAuthenticated = false
+        }
+    }
+    
+    func saveUserToDefaults() {
+        if let encoded = try? JSONEncoder().encode(user) {
+            UserDefaults.standard.set(encoded, forKey: "userData")
         }
     }
     
@@ -164,20 +194,73 @@ class MainViewModel: ObservableObject {
             print("Not enough coins to donate to Uncle Larry!")
             return false
         }
+        
         user.bearCoins -= 150 // Deduct 150 coins
-        print("Donated 150 coins to Uncle Larry!")
+        
+        // Update database
+        Task {
+            guard let userId = Auth.auth().currentUser?.uid else { return }
+            let db = Firestore.firestore()
+            
+            do {
+                try await db.collection("users").document(userId).updateData([
+                    "bearCoins": user.bearCoins
+                ])
+                print("Donated 150 coins to Uncle Larry!")
+            } catch {
+                print("Error updating coins in database: \(error.localizedDescription)")
+                // Rollback the local change if database update fails
+                user.bearCoins += 150
+                return
+            }
+        }
+        
         return true
     }
 
-        // Handles buying a streak freeze
     func buyStreakFreeze() -> Bool {
         guard user.bearCoins >= 100 else {
             print("Not enough coins to buy a streak freeze!")
             return false
         }
+        
         user.bearCoins -= 100 // Deduct 100 coins
         user.streakFreezes += 1 // Add a streak freeze
-        print("Purchased a streak freeze!")
+        
+        // Update database
+        Task {
+            guard let userId = Auth.auth().currentUser?.uid else { return }
+            let db = Firestore.firestore()
+            
+            do {
+                try await db.collection("users").document(userId).updateData([
+                    "bearCoins": user.bearCoins,
+                    "streakFreezes": user.streakFreezes
+                ])
+                print("Purchased a streak freeze!")
+            } catch {
+                print("Error updating user data in database: \(error.localizedDescription)")
+                // Rollback the local changes if database update fails
+                user.bearCoins += 100
+                user.streakFreezes -= 1
+                return
+            }
+        }
+        
         return true
     }
+    
+    func updateCoinsInDatabase() async {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        let db = Firestore.firestore()
+        
+        do {
+            try await db.collection("users").document(userId).updateData([
+                "bearCoins": user.bearCoins
+            ])
+        } catch {
+            print("Error updating coins in database: \(error.localizedDescription)")
+        }
+    }
+    
 }

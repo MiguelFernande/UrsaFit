@@ -24,7 +24,7 @@ struct CompletedWorkout: View {
                 .edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 20) {
-                Text("Workout Completed!")
+                Text("Great Job!")
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.white)
 

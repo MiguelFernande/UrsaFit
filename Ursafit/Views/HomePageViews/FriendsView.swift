@@ -10,6 +10,11 @@ import SwiftUI
 struct FriendsView: View {
     
     var body: some View {
-        Text("Freinds - Coming Soon...")
+        Text("Freinds - Coming Soon... Probs not though")
+        
+        Image("TacoDog")
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .edgesIgnoringSafeArea(.all)
     }
 }
