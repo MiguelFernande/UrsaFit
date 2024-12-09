@@ -64,7 +64,13 @@ struct WorkoutView: View {
             Task {
                 workoutStatsViewModel.resetStats()
                 await viewModel.startWorkout()
+                if let startTime = viewModel.workoutStartTime {
+                    workoutStatsViewModel.startObserving(startTime: startTime)
+                }
             }
+        }
+        .onDisappear {
+            workoutStatsViewModel.stopObserving()
         }
         .onReceive(workoutStatsViewModel.timer) { _ in
             if !workoutStatsViewModel.isPaused {
