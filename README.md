@@ -8,7 +8,6 @@ A gamified fitness tracking application that encourages users to maintain consis
 2. [Core Features](#2-core-features)
 3. [Tech Stack](#3-tech-stack)
 4. [Getting Started](#4-getting-started)
-5. [Implementation Status](#5-implementation-status)
 
 ## 1. Project Overview
 
